@@ -24,7 +24,7 @@ class QuestionMultipleChoice extends Question {
     
         for (String option : options) { 
             if (option.substring(1, 2).equals(answer)) {
-                fullAnswer = option;  // Update fullAnswer here
+                setFullAnswer(option);  
                 return true;
             }
         }

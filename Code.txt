@@ -159,142 +159,164 @@ class VotingService {
 }
 
 
-public class Simulation {
-    public static void main(String[] args) {
-        VotingService votingService = new VotingService();
-        Scanner scanner = new Scanner(System.in);
-        Random random = new Random();
-        Map<String, String> studentRecords = new HashMap<>();
+// public class iVoteDriver {
 
-        System.out.println("Welcome to the iVote Service!");
-        System.out.println("=============================\n");
+//     public static void main(String[] args) {
 
-        // Configure questions
-        MultipleChoiceQuestion mcq = new MultipleChoiceQuestion(
-                "1. What are your favorite programming languages?",
-                Arrays.asList("[A] Java", "[B] Python", "[C] C++", "[D] Rust"));
-
-        MultipleChoiceQuestion mcq2 = new MultipleChoiceQuestion(
-                "2. What is your favorite day?",
-                Arrays.asList("[A] Monday", "[B] Tuesday", "[C] Friday", "[D] Saturday"));
-
-        SingleChoiceQuestion scq = new SingleChoiceQuestion(
-                "3. Is this simulation helpful?",
-                Arrays.asList("[1] for Yes", "[2] for No"));
-
-        SingleChoiceQuestion scq2 = new SingleChoiceQuestion(
-                "4. Is this class CS3560?",
-                Arrays.asList("[1] for Yes", "[2] for No"));
-
-        List<Question> questions = Arrays.asList(mcq, mcq2, scq, scq2);
-        for (Question question : questions) {
-            votingService.configureQuestion(question);
-        }
-
-        String mode = ""; // Initialize mode to an empty string
-        boolean validMode = false;
-
-        while (!validMode) {
-            System.out.println("Press [1] for manual mode");
-            System.out.println("Press [2] for automatic mode");
-            mode = scanner.nextLine();
-
-            if ("1".equals(mode) || "2".equals(mode)) {
-                validMode = true;
-            } else {
-                System.out.println("Invalid mode selection. Please enter 1 or 2.");
-            }
-        }
-
-        if ("2".equals(mode)) {
-            // Automatic mode
-            int numberOfStudents = 10 + random.nextInt(41);
-            System.out.println("Number of students participating: " + numberOfStudents);
-
-            for (int i = 0; i < numberOfStudents; i++) {
-                String studentId = String.format("%05d", random.nextInt(100000));
-                Student student = new Student(studentId);
-
-                for (Question question : questions) {
-                    List<String> options = question.getOptions();
-                    String answer;
-
-                    if (question.isMultipleChoice()) {
-                        int index = random.nextInt(options.size());
-                        answer = options.get(index).substring(1, 2);
-                    } else {
-                        answer = "" + (1 + random.nextInt(2));
-                    }
-
-                    student.submitAnswer(answer);
-                    votingService.submitVote(student, question);
-                }
-            }
-        } else if ("1".equals(mode)) {
-            // Manual mode
-            int numberOfStudents = 0;
-            boolean validInput = false;
+//         VotingService votingService = new VotingService();
+//         Scanner scanner = new Scanner(System.in);
+//         Random random = new Random(); // Used to generate the random responses
+//         Map<String, String> studentRecords = new HashMap<>(); 
+//         List<Question> questions = configureQuestions(); // Call the configureQuestions method to get the list of questions
+//         String mode = "";
+//         boolean validMode = false;
         
-            while (!validInput) {
-                try {
-                    System.out.print("How many students are using the iVote service? ");
-                    numberOfStudents = Integer.parseInt(scanner.nextLine());
-                    if (numberOfStudents > 0) {
-                        validInput = true;
-                    } else {
-                        System.out.println("Please enter a positive integer.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("Invalid input. Please enter a positive integer.");
-                }
-            }
-        
+//         for (Question question : questions) {
+//             votingService.configureQuestion(question);
+//         }
+//         System.out.println("Welcome to the iVote Service!");
+//         System.out.println("=============================\n");
 
-            for (int i = 0; i < numberOfStudents; i++) {
-                String studentName;
-                String studentId;
-                boolean validName;
+//         while (!validMode) { // Loop until a valid mode response is given.
+//             System.out.println("Press [1] for manual mode");
+//             System.out.println("Press [2] for automatic mode");
+//             mode = scanner.nextLine();
 
-                do {
-                    validName = true;
-                    System.out.print("Enter student's name: ");
-                    studentName = scanner.nextLine();
+//             if ("1".equals(mode) || "2".equals(mode)) {
+//                 validMode = true;
+//             } else {
+//                 System.out.println("Invalid mode selection. Please enter 1 or 2.");
+//             }
+//         }
 
-                    if (studentRecords.containsKey(studentName)) {
-                        validName = false;
-                        System.out.println("A student may only take the test once.");
-                        System.out.println("The student ID " + studentRecords.get(studentName) + " has already been used.");
-                        System.out.println("Please enter a new name.");
-                    } else {
-                        studentId = String.format("%05d", (int)(Math.random() * 100000));
-                        System.out.println("This is " + studentName + "'s ID number: " + studentId);
-                        studentRecords.put(studentName, studentId);
-                        Student student = new Student(studentId);
+//         // Automatic mode is selected. Generates a random number of students between 10 and 50 to randomly answer the questions
+//         if ("2".equals(mode)) {
 
-                        for (Question question : questions) {
-                            System.out.println(question.getQuestionText());
-                            System.out.println("Choose an answer from: " + String.join(", ", question.getOptions()));
-                            String answer = scanner.nextLine();
-                            student.submitAnswer(answer);
+//             // 3) Randomly generates a number of students ranging from 10 to 50
+//             // to "answer" the prompted questions
+//             int numberOfStudents = 10 + random.nextInt(41);
+//             System.out.println("Number of students participating: " + numberOfStudents);
 
-                            while (!question.isAnswerValid(answer)) {
-                                System.out.println("Invalid answer. Please choose from: " + String.join(", ", question.getOptions()));
-                                answer = scanner.nextLine();
-                                student.submitAnswer(answer);
-                            }
+//             for (int i = 0; i < numberOfStudents; i++) {
+//                 // Generates the student IDs, but not useful outside of manual mode.
+//                 String studentId = String.format("%05d", random.nextInt(100000));
+//                 Student student = new Student(studentId);
 
-                            votingService.submitVote(student, question);
-                        }
-                    }
-                } while (!validName);
-            }
-        } else {
-            System.out.println("Invalid mode selection. Please select 1 or 2.");
-        }
+//                 for (Question question : questions) { // Iterate over Question objects
+//                     List<String> options = question.getOptions();
+//                     String answer;
 
-        // Display results after all questions have been answered
-        votingService.displayResults();
-        votingService.displayConsolidatedResults();
-        scanner.close();
-    }
-}
+//                     if (question.isMultipleChoice()) {
+//                         int index = random.nextInt(options.size());
+//                         answer = options.get(index).substring(1, 2);
+//                     } else {
+//                         answer = "" + (1 + random.nextInt(2));
+//                     }
+
+//                     // 4) submit all the students’ answers to iVote Service
+//                     student.submitAnswer(answer);
+//                     votingService.submitVote(student, question);
+//                 }
+//             }
+//         }
+
+//         // Manual mode selected
+//         else if ("1".equals(mode)) {
+//             int numberOfStudents = 0;
+//             boolean validInput = false;
+    
+//             while (!validInput) {
+//                 try {
+//                     System.out.print("How many students are using the iVote service? ");
+//                     numberOfStudents = Integer.parseInt(scanner.nextLine());
+//                     if (numberOfStudents > 0) {
+//                         validInput = true;
+//                     } else {
+//                         System.out.println("Please enter a positive integer.");
+//                     }
+//                 } catch (NumberFormatException e) {
+//                     System.out.println("Invalid input. Please enter a positive integer.");
+//                 }
+//             }
+    
+//             for (int i = 0; i < numberOfStudents; i++) {
+//                 String studentName;
+//                 String studentId;
+//                 boolean validName = false; // Initialize validName to false
+    
+//                 do { // Start a do-while loop for name validation
+//                     validName = true;
+//                     System.out.print("Enter student's name: ");
+//                     studentName = scanner.nextLine();
+    
+//                     if (studentRecords.containsKey(studentName)) {
+//                         validName = false;
+//                         System.out.println("A student may only take the test once.");
+//                         System.out.println("The student ID " + studentRecords.get(studentName) + " has already been used.");
+//                         System.out.println("Please enter a new name.");
+//                     } else {
+//                         studentId = String.format("%05d", (int)(Math.random() * 100000));
+//                         System.out.println("This is " + studentName + "'s ID number: " + studentId);
+//                         studentRecords.put(studentName, studentId);
+    
+//                         // Create the student object AFTER valid name is obtained
+//                         Student student = new Student(studentId);
+    
+//                         for (Question question : questions) {
+//                             boolean validAnswer = false;
+    
+//                             while (!validAnswer) {
+//                                 System.out.println(question.getQuestionText());
+//                                 System.out.println("Choose an answer from: " + String.join(", ", question.getOptions()));
+//                                 String answer = scanner.nextLine();
+    
+//                                 validAnswer = question.isValidAnswer(answer); // This line is corrected to update validAnswer
+    
+//                                 if (validAnswer) {
+//                                     // 4) submit all the students’ answers to iVote Service
+//                                     student.submitAnswer(answer);
+//                                     votingService.submitVote(student, question);
+//                                 } else {
+//                                     System.out.println("Please try again.");
+//                                 }
+//                             } // End of while loop for invalid answers
+//                         } // End of question loop
+//                     } // End of else block for valid names
+//                 } while (!validName);
+//             }
+//         } // This closing brace was missing, causing the syntax error
+//         // Display results after all questions have been answered
+
+//         // 5) call the VotingService output function to display the result. 
+//         votingService.displayResults(); // Shows the individual question's answers
+//         votingService.displayConsolidatedResults(); // Shows the consolidated question's answers
+//         scanner.close();
+//     } // End of main method
+
+
+//     private static List<Question> configureQuestions() {
+//         List<Question> questions = new ArrayList<>(); 
+
+//         questions.add(new QuestionMultipleChoice(
+//             "1. What are your favorite programming languages?",
+//             Arrays.asList("[A] Java", "[B] Python", "[C] C++", "[D] Rust")
+//         ));
+
+//         questions.add(new QuestionMultipleChoice(
+//             "2. What is your favorite day?",
+//             Arrays.asList("[A] Monday", "[B] Tuesday", "[C] Friday", "[D] Saturday")
+//         ));
+
+//         questions.add(new QuestionSingleChoice(
+//             "3. Do you take the elevator to class?",
+//             Arrays.asList("[1] for Yes", "[2] for No")
+//         ));
+
+//         questions.add(new QuestionSingleChoice(
+//             "4. Is this class CS3560?",
+//             Arrays.asList("[1] for Yes", "[2] for No")
+//         ));
+
+//         return questions;
+//     }
+// }

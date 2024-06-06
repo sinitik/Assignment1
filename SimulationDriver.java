@@ -3,7 +3,7 @@ import java.util.*;
 /**
  * Driver program for the iVote Service. Initializes and runs a voting session.
  */
-public class iVoteDriver {
+public class SimulationDriver {
     public static void main(String[] args) {
         VotingSession session = new VotingSession();
         session.configureQuestions();

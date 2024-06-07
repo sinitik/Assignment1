@@ -68,7 +68,7 @@ class VotingService implements SimulationInterface {
      */
     public void displayConsolidatedResults() {
 
-        System.out.println("\nVoting Results For All Questions:");
+        System.out.println("\nVoting Results For All iVote Service Questions:");
         Map < String, Integer > consolidatedResults = new HashMap < > ();
 
         // Initialize the map with zero counts for all possible options (A, B, C, D, or T/F)

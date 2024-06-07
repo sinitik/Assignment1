@@ -134,7 +134,7 @@ class VotingSession {
                 int numAnswers = 2 + random.nextInt(4); 
                 for (int j = 0; j < numAnswers; j++) {
                     String answer = generateValidAnswer(question, random);
-                    if (question.isValidAnswer(answer)) { // Checks if the answers that were generated before saving
+                    if (question.isValidAnswer(answer)) { // Checks if the generated answers are valid before saving
                         lastValidAnswers.get(student.getStudentID()).put(question, answer); 
                     }
                 }
@@ -142,6 +142,7 @@ class VotingSession {
         }
        
         // If answer was valid, it will save the lastValidAnswer and add it to the student's ID as their answer for that question
+        // "If multiple submissions are received from the same student, only the last submission will be counted."
         for (Student student : students) {
             for (Question question : questionList) {
                 String lastValidAnswer = lastValidAnswers.get(student.getStudentID()).get(question);

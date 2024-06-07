@@ -28,12 +28,10 @@ abstract class Question {
         return options;
     }
 
-    // Getter for the fullAnswer field
+    // Getter and setter for the fullAnswer field
     public String getFullAnswer() {
         return fullAnswer;
     }
-
-    // Setter for the fullAnswer field
     protected void setFullAnswer(String fullAnswer) {
         this.fullAnswer = fullAnswer;
     }

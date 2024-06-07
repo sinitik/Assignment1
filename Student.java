@@ -1,5 +1,6 @@
-// Stores the student's ID and their answer to a question. 
-
+/**
+ * Stores the student's ID and their answer to a question. 
+ */
 class Student {
 
     private String studentID; // Unique String for the student.

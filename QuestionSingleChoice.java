@@ -1,7 +1,8 @@
 import java.util.List;
 
-// Subclass of Question, represents all single-choice questions (Yes/No)
-
+/** 
+*   Subclass of Question, represents all single-choice questions (Yes/No)
+*/
 class QuestionSingleChoice extends Question {
 
 

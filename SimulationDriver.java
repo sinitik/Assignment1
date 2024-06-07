@@ -5,56 +5,64 @@ import java.util.*;
  */
 public class SimulationDriver {
     public static void main(String[] args) {
+
         VotingSession session = new VotingSession();
+
+        // Configures questions from the configureQuestions method
         session.configureQuestions();
+
         System.out.println("Welcome to the iVote Service!");
         System.out.println("=============================\n");
 
-        Scanner scanner = new Scanner(System.in);
-        session.selectMode(scanner);
+        Scanner inputScan = new Scanner(System.in);
+        session.selectMode(inputScan);
 
+
+        // Generates students if the session is in automatic mode
+        // else it will collect the student responses
         if (session.isAutomaticMode()) {
             session.generateStudents();
         } else {
-            session.collectStudentResponses(scanner);
+            session.collectStudentResponses(inputScan);
         }
 
+
         session.displayResults();
-        scanner.close();
+        inputScan.close();
     }
 }
 
-/**  Makes a VotingSession that holds the question configuration, a manual/auto mode for usage, and 
+/**  VotingSession holds the question configuration, a manual/auto mode for usage, and 
  * the ability to call the VotingService class to provide the logged collected votes. 
  */
 class VotingSession {
     private VotingService votingService = new VotingService();
-    private List < Question > questions = new ArrayList < > ();
+    private List < Question > questionList = new ArrayList < > ();
     private boolean automaticMode; // Whether automatic or manual mode
-    private static final long STUDENT_ID_SEED = 12345;
+    private Random randomID = new Random();
 
     /**
      * Configures the questions for the voting session
      * Covers part 2/3 of the question prompt
      */
     public void configureQuestions() {
-        questions.add(new QuestionMultipleChoice(
+        questionList.add(new QuestionMultipleChoice(
             "1. What are your favorite programming languages?",
             Arrays.asList("[A] Java", "[B] Python", "[C] C++", "[D] Rust")
         ));
-        questions.add(new QuestionMultipleChoice(
+        questionList.add(new QuestionMultipleChoice(
             "2. What is your favorite day?",
             Arrays.asList("[A] Monday", "[B] Tuesday", "[C] Friday", "[D] Saturday")
         ));
-        questions.add(new QuestionSingleChoice(
+        questionList.add(new QuestionSingleChoice(
             "3. Do you take the elevator to class?",
             Arrays.asList("[1] for Yes", "[2] for No")
         ));
-        questions.add(new QuestionSingleChoice(
+        questionList.add(new QuestionSingleChoice(
             "4. Is this class CS3560?",
             Arrays.asList("[1] for Yes", "[2] for No")
         ));
-        questions.forEach(votingService::configureQuestion);
+        questionList.forEach(votingService::configureQuestion);
     }
     /**
      * Prompts the user to select the mode manual or automatic.
@@ -94,7 +102,7 @@ class VotingSession {
 
             // Enhanced for-loop to cycle through all generated students and to have them answer 
             // each configured question
-            for (Question question: questions) {
+            for (Question question: questionList) {
                 String answer = generateRandomAnswer(question, random);
                 student.submitAnswer(answer);
                 votingService.submitVote(student, question);
@@ -125,14 +133,13 @@ class VotingSession {
      */
 
     public void collectStudentResponses(Scanner scanner) {
-        Map < String, String > studentRecords = new HashMap < > ();
+        Map < String, String > studentResponses = new HashMap < > ();
         int numberOfStudents = 0;
         boolean validInput = false;
 
-        // Error handling if a positive integer is not put in for the number of students using the service.
         while (!validInput) {
             System.out.print("How many students are using the iVote service? ");
-            try {
+            try { // Error handling if input is a valid input
                 numberOfStudents = Integer.parseInt(scanner.nextLine());
                 if (numberOfStudents > 0) {
                     validInput = true;
@@ -144,9 +151,9 @@ class VotingSession {
             }
         }
         for (int i = 0; i < numberOfStudents; i++) {
-            Student student = new Student(getUniqueStudentID(scanner, studentRecords));
+            Student student = new Student(getUniqueStudentID(scanner, studentResponses));
 
-            for (Question question: questions) {
+            for (Question question: questionList) {
                 String answer;
                 do {
                     System.out.println(question.getQuestionText());
@@ -155,7 +162,7 @@ class VotingSession {
                 } while (!question.isValidAnswer(answer)); // Loop until a valid answer is provided
 
                 student.submitAnswer(answer);
-                votingService.submitVote(student, question);
+                votingService.submitVote(student, question); // Records response
             }
         }
     }
@@ -171,9 +178,8 @@ class VotingSession {
      */
     private String getUniqueStudentID(Scanner scanner, Map < String, String > studentRecords) {
         String studentName;
-        String studentId = null;
-        boolean uniqueId = false;
-        Random randomID = new Random(STUDENT_ID_SEED); // Seeded random for student IDs
+        String studentID = "";
+        boolean uniqueID = false; // Checks if the ID is unique
 
         do {
             System.out.print("Enter student's name: ");
@@ -182,19 +188,25 @@ class VotingSession {
                 System.out.println("A student may only take the test once.");
                 System.out.println("The student ID " + studentRecords.get(studentName) + " has already been used.");
             } else {
-                studentId = String.format("%05d", randomID.nextInt(100000)); // Uses a seed to keep results for the ID same for users
-                System.out.println("This is " + studentName + "'s ID number: " + studentId);
-                studentRecords.put(studentName, studentId);
-                uniqueId = true;
+                // Generate random ID directly within the method:
+                studentID = String.format("%05d", randomID.nextInt(100000));
+                System.out.println("This is " + studentName + "'s ID number: " + studentID);
+                studentRecords.put(studentName, studentID);
+                uniqueID = true; // Set the flag when a unique ID is found
             }
-        } while (!uniqueId); // Keep looping if the ID is not unique
-        return studentId;
+        } while (!uniqueID); // Loop until a unique ID is found
+
+        return studentID;
     }
 
 
+
+    // Checks whether its mode is automatic or manual
     public boolean isAutomaticMode() {
         return automaticMode;
     }
+
+    // Calls the votingService class methods to display the counted results of users
     public void displayResults() {
         votingService.displayResults();
         votingService.displayConsolidatedResults();

@@ -1,8 +1,12 @@
 import java.util.*;
 
-// Holds methods for submitting votes, collecting votes, displaying the individual question results, and the consolidated results.
 
-class VotingService implements iVoteInterface {
+/**
+ * The VotingService class implements the iVoteInterface and is responsible for managing the voting process.
+ * Holds methods for configuring questions, submitting votes, and displaying the results.
+ */
+
+class VotingService implements SimulationInterface {
 
     // Stores all questions and collected votes
     private List < Question > questions = new ArrayList < > ();
@@ -11,26 +15,44 @@ class VotingService implements iVoteInterface {
     // for each of the questions
     private Map < String, Map < String, Integer >> allVotes = new LinkedHashMap < > ();
 
+
+    /**
+     * Configures a question for the voting session.
+     * Initializes the vote count map for this question with empty (zero) values for all possible answers.
+     *
+     * @param question The question to be added to the voting session.
+     */
     public void configureQuestion(Question question) {
-        // Adds a question to the voting session.
+        // Configures a question for the voting session.
         // Initializes the vote count map for this question with empty (zero) values for all possible answers.
         questions.add(question); // Add the question to the list
         allVotes.put(question.getQuestionText(), new HashMap < > ()); // Create an empty map for this question's votes in allVotes
     }
 
+    /**
+     * Submits a student's vote for a specific question.
+     *
+     * @param student The student submitting the vote.
+     * @param question The question the student is voting on.
+     */
+
     public void submitVote(Student student, Question question) {
         String studentAnswer = student.getAnswer();
         boolean validAnswer = question.isValidAnswer(studentAnswer); // Validate answer
-    
+
         if (validAnswer) { // Only proceed if the answer is valid
             String answerKey = question.getFullAnswer(); // Use getFullAnswer to get the correct key
-            Map<String, Integer> voteCounts = allVotes.get(question.getQuestionText());
+            Map < String, Integer > voteCounts = allVotes.get(question.getQuestionText());
             voteCounts.put(answerKey, voteCounts.getOrDefault(answerKey, 0) + 1);
         }
     }
 
+
+    /**
+     * Displays the voting results for each individual question.
+     */
     public void displayResults() {
-        // Displays the voting results for each individual question.
+
         for (Question question: questions) {
             System.out.println("\nVoting Results for: " + question.getQuestionText()); // Reiterates the question prompt
             Map < String, Integer > voteCounts = allVotes.get(question.getQuestionText());
@@ -42,7 +64,9 @@ class VotingService implements iVoteInterface {
         }
     }
 
-    // Displays the consolidated results for the program
+    /**
+     * Displays the consolidated results of all questions, combining results for similar answer types (A, B, C, D or True/False).
+     */
     public void displayConsolidatedResults() {
 
         System.out.println("\nVoting Results For All Questions:");

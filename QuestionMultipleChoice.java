@@ -1,6 +1,8 @@
 import java.util.List;
 
-// Subclass of Question
+/**
+ * Subclass of the Question superclass, handles all multiple choice questions (A, B, C, D)
+ */
 
 class QuestionMultipleChoice extends Question {
 
@@ -14,23 +16,23 @@ class QuestionMultipleChoice extends Question {
     public boolean isValidAnswer(String originalAnswer) {
 
         // Makes a copy of the value in upper case in case the response was lower
-        String answer = originalAnswer.trim().toUpperCase(); 
+        String answer = originalAnswer.trim().toUpperCase();
 
         // Error handling if the response is more than letter
         if (answer.length() != 1) {
             System.out.println("Invalid input format. Please enter a single letter.");
             return false;
         }
-    
-        for (String option : options) { 
+
+        for (String option: options) {
             if (option.substring(1, 2).equals(answer)) {
-                setFullAnswer(option);  
+                setFullAnswer(option);
                 return true;
             }
         }
-    
+
         System.out.println("Invalid answer. Please choose from: " + getOptions());
-        return false; 
+        return false;
     }
 
     @Override

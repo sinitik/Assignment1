@@ -1,8 +1,9 @@
 import java.util.*;
 
 
-// Superclass to serve as the basis for Single/Multiple Choice questions, as well as
-// future variations of questions if needed such as open-ended questions.
+/** Superclass to serve as the basis for Single/Multiple Choice questions, as well as
+ * future variations of questions if needed such as open-ended questions.
+ */
 
 abstract class Question {
 
@@ -11,7 +12,7 @@ abstract class Question {
 
     // Strings to hold the valid answers a student can use.
     protected List < String > options;
-    private String fullAnswer; 
+    private String fullAnswer;
 
     // Constructor
     public Question(String questionText, List < String > options) {

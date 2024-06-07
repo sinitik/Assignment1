@@ -1,4 +1,8 @@
-interface iVoteInterface {
+/**
+ * Structure for the Voting Service application
+ */
+
+ interface SimulationInterface {
 
     // Submits a student's vote for a specific question.
     void submitVote(Student student, Question question);

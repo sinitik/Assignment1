@@ -55,7 +55,7 @@ class VotingSession {
     public void configureQuestions() {
         questionList.add(new QuestionMultipleChoice(
             "1.) What are your favorite programming languages?",
-            Arrays.asList("[A] Java", "[B] Python", "[C] C++", "[D] Rust")
+            Arrays.asList("[A] Python", "[B] Java", "[C] C++", "[D] Rust")
         ));
         questionList.add(new QuestionMultipleChoice(
             "2.) What is your favorite day?",

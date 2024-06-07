@@ -11,7 +11,11 @@ class QuestionMultipleChoice extends Question {
         super(questionText, options);
     }
 
-    // Checks if the response is a valid response (A, B, C, D)
+
+    /**
+     * Verifies if answer is valid valid response (A, B, C, D) or not
+     * @return true for valid, false for invalid
+     */
     @Override
     public boolean isValidAnswer(String originalAnswer) {
 
@@ -35,6 +39,9 @@ class QuestionMultipleChoice extends Question {
         return false;
     }
 
+    /**
+     * @return returns true since the Question is multipleChoice
+     */
     @Override
     public boolean isMultipleChoice() {
         return true;

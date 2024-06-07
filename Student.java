@@ -6,6 +6,10 @@ class Student {
     private String studentID; // Unique String for the student.
     private String answer; // Holds the answer for each student.
 
+    /**
+     * Constructor
+     * @param studentID
+     */
     public Student(String studentID) {
         this.studentID = studentID;
     }
@@ -15,11 +19,17 @@ class Student {
         this.answer = answer;
     }
 
-    // Getter methods for the student's data
+    /**
+     * Getter methods for the student's answer
+     * @return student's answer
+     */
     public String getAnswer() {
         return answer;
     }
-
+    /**
+     * Getter method for the studentID
+     * @return student's ID
+     */
     public String getStudentID() {
         return studentID;
     }

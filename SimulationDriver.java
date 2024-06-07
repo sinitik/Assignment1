@@ -50,6 +50,7 @@ class VotingSession {
 
     /**
      * Configures the questions for the voting session
+     * and adds them to the questionList
      * Covers part 2/3 of the question prompt
      */
     public void configureQuestions() {

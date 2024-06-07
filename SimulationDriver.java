@@ -47,19 +47,19 @@ class VotingSession {
      */
     public void configureQuestions() {
         questionList.add(new QuestionMultipleChoice(
-            "1. What are your favorite programming languages?",
+            "1.) What are your favorite programming languages?",
             Arrays.asList("[A] Java", "[B] Python", "[C] C++", "[D] Rust")
         ));
         questionList.add(new QuestionMultipleChoice(
-            "2. What is your favorite day?",
+            "2.) What is your favorite day?",
             Arrays.asList("[A] Monday", "[B] Tuesday", "[C] Friday", "[D] Saturday")
         ));
         questionList.add(new QuestionSingleChoice(
-            "3. Do you take the elevator to class?",
+            "3.) Do you take the elevator to class?",
             Arrays.asList("[1] for Yes", "[2] for No")
         ));
         questionList.add(new QuestionSingleChoice(
-            "4. Is this class CS3560?",
+            "4.) Is this class CS3560?",
             Arrays.asList("[1] for Yes", "[2] for No")
         ));
         questionList.forEach(votingService::configureQuestion);

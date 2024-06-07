@@ -6,8 +6,8 @@ import java.util.*;
  * or manual mode. 
  * 
  * Automatic Mode: Generates 10-50 students randomly where they are associated by studentID
- * Each studentID has 2-5 answers per question, where it saves the most recent valid response
- * by that student. 
+ * Each student has 2-5 answers per question, where it saves the most recent valid response
+ * by that student to their studentID.
  * Manual Mode: Input a postive integer stating how many students are using the iVote Service
  * followed by a unique studentID. Afterward, the user will answer the questions manually.
  * 
@@ -148,7 +148,7 @@ class VotingSession {
                 String lastValidAnswer = lastValidAnswers.get(student.getStudentID()).get(question);
                 if (lastValidAnswer != null) {
                     student.submitAnswer(lastValidAnswer);
-                    votingService.submitVote(student, question);
+                    votingService.submitVote(student, question); // Submits the response to the votingService class
                 }
             }
         }

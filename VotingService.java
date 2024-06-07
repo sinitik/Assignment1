@@ -3,7 +3,8 @@ import java.util.*;
 
 /**
  * The VotingService class implements the iVoteInterface and is responsible for managing the voting process.
- * Holds methods for configuring questions, submitting votes, and displaying the results.
+ * Holds methods for configuring questions, submitting votes, and displaying the results by 
+ * cycling through the studentID list 
  */
 
 class VotingService implements SimulationInterface {

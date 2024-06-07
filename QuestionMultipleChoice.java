@@ -18,18 +18,16 @@ class QuestionMultipleChoice extends Question {
      */
     @Override
     public boolean isValidAnswer(String originalAnswer) {
+        String answer = originalAnswer.trim().toUpperCase(); // 
 
-        // Makes a copy of the value in upper case in case the response was lower
-        String answer = originalAnswer.trim().toUpperCase();
-
-        // Error handling if the response is more than letter
-        if (answer.length() != 1) {
+        if (answer.length() != 1) { // Check if it's a single letter
             System.out.println("Invalid input format. Please enter a single letter.");
             return false;
         }
 
-        for (String option: options) {
-            if (option.substring(1, 2).equals(answer)) {
+        // Find the full answer based on the letter choice (A, B, C, or D)
+        for (String option : options) {
+            if (option.startsWith("[" + answer + "]")) { // Check if option starts with the letter
                 setFullAnswer(option);
                 return true;
             }

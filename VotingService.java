@@ -36,17 +36,16 @@ class VotingService implements SimulationInterface {
      * @param question The question the student is voting on.
      */
 
-    public void submitVote(Student student, Question question) {
+     public void submitVote(Student student, Question question) {
         String studentAnswer = student.getAnswer();
-        boolean validAnswer = question.isValidAnswer(studentAnswer); // Validate answer
-
-        if (validAnswer) { // Only proceed if the answer is valid
-            String answerKey = question.getFullAnswer(); // Use getFullAnswer to get the correct key
-            Map < String, Integer > voteCounts = allVotes.get(question.getQuestionText());
-            voteCounts.put(answerKey, voteCounts.getOrDefault(answerKey, 0) + 1);
+        boolean validAnswer = question.isValidAnswer(studentAnswer);
+    
+        if (validAnswer) {
+            String answerKey = question.getFullAnswer(); // Get the full answer, including brackets
+            Map<String, Integer> voteCounts = allVotes.get(question.getQuestionText());
+            voteCounts.put(answerKey, voteCounts.getOrDefault(answerKey, 0) + 1); // Increment the count for the full answer
         }
     }
-
 
     /**
      * Displays the voting results for each individual question.

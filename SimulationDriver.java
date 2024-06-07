@@ -3,10 +3,16 @@ import java.util.*;
 /**
  * Driver program for the iVote Service. Initializes and runs a voting session.
  * After running, the program will prompt if the user is running the program in automatic
- * or manual mode. If used in automatic, it will generate 10-50 students that will provide
- * answers automatically. Whereas if manual mode is selected, it will prompt how many users
- * will be using the service. After a positive integer is input, it will request for a 
- * unique studentID. After providing a unique ID the user will be able to answer questions.
+ * or manual mode. 
+ * 
+ * Automatic Mode: Generates 10-50 students randomly where they are associated by studentID
+ * Each studentID has 2-5 answers per question, where it saves the most recent valid response
+ * by that student. 
+ * Manual Mode: Input a postive integer stating how many students are using the iVote Service
+ * followed by a unique studentID. Afterward, the user will answer the questions manually.
+ * 
+ * At the end of manual and automatic mode, the program will display the answers using the VotingService
+ * class to display all consolidated answers and answers for the individual questions.
  * 
  */
 
@@ -105,37 +111,68 @@ class VotingSession {
      */
     public void generateStudents() {
         Random random = new Random();
-        int numberOfStudents = 10 + random.nextInt(41); // Randomly generate 10 to 50 students
+        int numberOfStudents = 10 + random.nextInt(41); 
         System.out.println("Number of students participating: " + numberOfStudents);
-
+    
+        List<Student> students = new ArrayList<>();
         for (int i = 0; i < numberOfStudents; i++) {
             String studentId = String.format("%05d", random.nextInt(100000));
-            Student student = new Student(studentId);
-
-            // Enhanced for-loop to cycle through all generated students and to have them answer 
-            // each configured question
-            for (Question question: questionList) {
-                String answer = generateRandomAnswer(question, random);
-                student.submitAnswer(answer);
-                votingService.submitVote(student, question);
+            students.add(new Student(studentId));
+        }
+    
+        // Store last valid answers per student and question
+        Map<String, Map<Question, String>> lastValidAnswers = new HashMap<>();
+        for (Student student : students) {
+            lastValidAnswers.put(student.getStudentID(), new HashMap<>());
+        }
+    
+        // Simulate students having multiple answers per question but only storing
+        // the most recent answer
+        for (Student student : students) {
+            for (Question question : questionList) {
+                // Generates 2-5 answers per question
+                int numAnswers = 2 + random.nextInt(4); 
+                for (int j = 0; j < numAnswers; j++) {
+                    String answer = generateValidAnswer(question, random);
+                    if (question.isValidAnswer(answer)) { // Checks if the answers that were generated before saving
+                        lastValidAnswers.get(student.getStudentID()).put(question, answer); 
+                    }
+                }
+            }
+        }
+       
+        // If answer was valid, it will save the lastValidAnswer and add it to the student's ID as their answer for that question
+        for (Student student : students) {
+            for (Question question : questionList) {
+                String lastValidAnswer = lastValidAnswers.get(student.getStudentID()).get(question);
+                if (lastValidAnswer != null) {
+                    student.submitAnswer(lastValidAnswer);
+                    votingService.submitVote(student, question);
+                }
             }
         }
     }
+    
+
 
     /**
-     * Generates random answers to be used in conjunction with generateStudents
+     * Generates random valid answers to be used in conjunction with generateStudents
      * @param question The question for which to generate an answer.
      * @param answer   A response for the generator
      * @return Returns the students answer
      */
-    private String generateRandomAnswer(Question question, Random answer) {
+    private String generateValidAnswer(Question question, Random random) {
         List < String > options = question.getOptions();
+
         if (question.isMultipleChoice()) {
-            return options.get(answer.nextInt(options.size())).substring(1, 2);
+            int randomIndex = random.nextInt(options.size());
+            String option = options.get(randomIndex);
+            return option.substring(1, 2).toUpperCase(); // Extract and return A, B, C, or D
         } else {
-            return "" + (1 + answer.nextInt(2));
+            return random.nextInt(2) == 0 ? "1" : "2"; // Return 1 or 2 for single-choice
         }
     }
+
 
 
     /**
@@ -143,35 +180,38 @@ class VotingSession {
      * Prompts for the number of students and then takes individual responses for each question.
      * @param scanner The Scanner object for reading user input.
      */
-     public void collectStudentResponses(Scanner scanner) {
-        Map<String, String> studentRecords = new HashMap<>(); 
+    public void collectStudentResponses(Scanner scanner) {
+        Map < String, String > studentRecords = new HashMap < > ();
         System.out.print("How many students are using the iVote service? ");
         int numberOfStudents = Integer.parseInt(scanner.nextLine());
 
         for (int i = 0; i < numberOfStudents; i++) {
-            String studentId;
-            boolean uniqueId = false;
+            String studentID;
+            boolean uniqueID = false;
+
 
             do {
                 System.out.print("Enter student ID: ");
-                studentId = scanner.nextLine();
+                studentID = scanner.nextLine();
 
-                if (studentRecords.containsValue(studentId)) {
+                // Error handling if the studentID has already been taken.
+                if (studentRecords.containsValue(studentID)) {
                     System.out.println("This student ID has already been used. Please enter a unique ID.");
                 } else {
-                    uniqueId = true;
-                    studentRecords.put("Student " + (i + 1), studentId); 
+                    uniqueID = true;
+                    studentRecords.put("Student " + (i + 1), studentID);
                 }
-            } while (!uniqueId);
+            } while (!uniqueID);
 
-            Student student = new Student(studentId);
-            for (Question question : questionList) { 
+            // For each unique studentID begin providing the questionList
+            Student student = new Student(studentID);
+            for (Question question: questionList) {
                 String answer;
                 do {
                     System.out.println(question.getQuestionText());
                     System.out.println("Choose an answer from: " + String.join(", ", question.getOptions()));
                     answer = scanner.nextLine();
-                } while (!question.isValidAnswer(answer)); 
+                } while (!question.isValidAnswer(answer));
 
                 student.submitAnswer(answer);
                 votingService.submitVote(student, question);

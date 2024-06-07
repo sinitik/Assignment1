@@ -11,6 +11,10 @@ class QuestionSingleChoice extends Question {
         super(questionText, options);
     }
 
+    /**
+     * Verifies if answer is valid or not
+     * @return true for valid, false for invalid
+     */
     @Override
     public boolean isValidAnswer(String answer) {
         if (answer.equals("1") || answer.equals("2")) {
@@ -22,6 +26,10 @@ class QuestionSingleChoice extends Question {
         }
     }
 
+    /**
+     * Returns false since it is not multiple choice
+     * @return false
+     */
     @Override
     public boolean isMultipleChoice() {
         return false;

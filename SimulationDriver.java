@@ -22,7 +22,7 @@ public class SimulationDriver {
         System.out.println("=============================\n");
 
         Scanner inputScan = new Scanner(System.in);
-        session.selectMode(inputScan);
+        session.selectMode(inputScan); // Let the user choose manual or automatic mode
 
 
         // Generates students if the session is in automatic mode
@@ -34,8 +34,8 @@ public class SimulationDriver {
         }
 
 
-        session.displayResults();
-        inputScan.close();
+        session.displayResults(); // Show the voting results
+        inputScan.close(); // Closed the scanner
     }
 }
 
@@ -72,6 +72,8 @@ class VotingSession {
         ));
         questionList.forEach(votingService::configureQuestion);
     }
+
+
     /**
      * Prompts the user to select the mode manual or automatic.
      * @param scanner Saves the users input for mode.
@@ -97,7 +99,9 @@ class VotingSession {
     }
 
     /**
-     * Generates a random number of students
+     * Simulates student responses in automatic mode.
+     * Generates a random number of students (10-50), assigns them IDs,
+     * and automatically generates random answers for each question.
      */
     public void generateStudents() {
         Random random = new Random();
@@ -139,7 +143,6 @@ class VotingSession {
      * Prompts for the number of students and then takes individual responses for each question.
      * @param scanner The Scanner object for reading user input.
      */
-
      public void collectStudentResponses(Scanner scanner) {
         Map<String, String> studentRecords = new HashMap<>(); 
         System.out.print("How many students are using the iVote service? ");

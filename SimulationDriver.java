@@ -46,7 +46,7 @@ class VotingSession {
     private VotingService votingService = new VotingService();
     private List < Question > questionList = new ArrayList < > ();
     private boolean automaticMode; // Whether automatic or manual mode
-    private Random randomID = new Random();
+
 
     /**
      * Configures the questions for the voting session

@@ -2,7 +2,14 @@ import java.util.*;
 
 /**
  * Driver program for the iVote Service. Initializes and runs a voting session.
+ * After running, the program will prompt if the user is running the program in automatic
+ * or manual mode. If used in automatic, it will generate 10-50 students that will provide
+ * answers automatically. Whereas if manual mode is selected, it will prompt how many users
+ * will be using the service. After a positive integer is input, it will request for a 
+ * unique studentID. After providing a unique ID the user will be able to answer questions.
+ * 
  */
+
 public class SimulationDriver {
     public static void main(String[] args) {
 
@@ -132,43 +139,45 @@ class VotingSession {
      * @param scanner The Scanner object for reading user input.
      */
 
-    public void collectStudentResponses(Scanner scanner) {
-        Map < String, String > studentResponses = new HashMap < > ();
-        int numberOfStudents = 0;
-        boolean validInput = false;
+     public void collectStudentResponses(Scanner scanner) {
+        Map<String, String> studentRecords = new HashMap<>(); 
+        System.out.print("How many students are using the iVote service? ");
+        int numberOfStudents = Integer.parseInt(scanner.nextLine());
 
-        while (!validInput) {
-            System.out.print("How many students are using the iVote service? ");
-            try { // Error handling if input is a valid input
-                numberOfStudents = Integer.parseInt(scanner.nextLine());
-                if (numberOfStudents > 0) {
-                    validInput = true;
-                } else {
-                    System.out.println("Please enter a positive integer.");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a positive integer.");
-            }
-        }
         for (int i = 0; i < numberOfStudents; i++) {
-            Student student = new Student(getUniqueStudentID(scanner, studentResponses));
+            String studentId;
+            boolean uniqueId = false;
 
-            for (Question question: questionList) {
+            do {
+                System.out.print("Enter student ID: ");
+                studentId = scanner.nextLine();
+
+                if (studentRecords.containsValue(studentId)) {
+                    System.out.println("This student ID has already been used. Please enter a unique ID.");
+                } else {
+                    uniqueId = true;
+                    studentRecords.put("Student " + (i + 1), studentId); 
+                }
+            } while (!uniqueId);
+
+            Student student = new Student(studentId);
+            for (Question question : questionList) { 
                 String answer;
                 do {
                     System.out.println(question.getQuestionText());
                     System.out.println("Choose an answer from: " + String.join(", ", question.getOptions()));
                     answer = scanner.nextLine();
-                } while (!question.isValidAnswer(answer)); // Loop until a valid answer is provided
+                } while (!question.isValidAnswer(answer)); 
 
                 student.submitAnswer(answer);
-                votingService.submitVote(student, question); // Records response
+                votingService.submitVote(student, question);
             }
         }
     }
 
 
-
+    // Originally was used to create a studentID provided by a user's name. Opted for using a studentID system 
+    // instead to avoid having to deal with duplicate names.
     /**
      * Retrieves a unique student ID from the user and ensures it hasn't been used before.
      *
@@ -176,28 +185,28 @@ class VotingSession {
      * @param studentRecords A map storing the names and IDs of students who have already responded.
      * @return A unique student ID string.
      */
-    private String getUniqueStudentID(Scanner scanner, Map < String, String > studentRecords) {
-        String studentName;
-        String studentID = "";
-        boolean uniqueID = false; // Checks if the ID is unique
+    // private String getUniqueStudentID(Scanner scanner, Map < String, String > studentRecords) {
+    //     String studentName;
+    //     String studentID = "";
+    //     boolean uniqueID = false; // Checks if the ID is unique
 
-        do {
-            System.out.print("Enter student's name: ");
-            studentName = scanner.nextLine();
-            if (studentRecords.containsKey(studentName)) {
-                System.out.println("A student may only take the test once.");
-                System.out.println("The student ID " + studentRecords.get(studentName) + " has already been used.");
-            } else {
-                // Generate random ID directly within the method:
-                studentID = String.format("%05d", randomID.nextInt(100000));
-                System.out.println("This is " + studentName + "'s ID number: " + studentID);
-                studentRecords.put(studentName, studentID);
-                uniqueID = true; // Set the flag when a unique ID is found
-            }
-        } while (!uniqueID); // Loop until a unique ID is found
+    //     do {
+    //         System.out.print("Enter student's name: ");
+    //         studentName = scanner.nextLine();
+    //         if (studentRecords.containsKey(studentName)) {
+    //             System.out.println("A student may only take the test once.");
+    //             System.out.println("The student ID " + studentRecords.get(studentName) + " has already been used.");
+    //         } else {
+    //             // Generate random ID directly within the method:
+    //             studentID = String.format("%05d", randomID.nextInt(100000));
+    //             System.out.println("This is " + studentName + "'s ID number: " + studentID);
+    //             studentRecords.put(studentName, studentID);
+    //             uniqueID = true; // Set the flag when a unique ID is found
+    //         }
+    //     } while (!uniqueID); // Loop until a unique ID is found
 
-        return studentID;
-    }
+    //     return studentID;
+    // }
 
 
 
